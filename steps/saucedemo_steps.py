@@ -34,4 +34,7 @@ def updated_count_in_cart(page:Page,num):
 def checkout_cart(page:Page):
     checkout_obj = SauceDemo(page) 
     checkout_obj.checkout_c()
+
+
+
        
