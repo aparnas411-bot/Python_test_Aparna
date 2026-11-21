@@ -44,3 +44,6 @@ def navigate_url(page:Page,url):
        utils_obj=Utils(page)
        utils_obj.launchUrl(url)
 
+
+
+
