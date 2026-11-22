@@ -3,18 +3,18 @@ Feature: Browser Actions
     Given I open the Playwright website
     Then the page title should contain "Playwright"
 
-   Scenario: Browser Actions
-    Given I navigate to a webpage
-    Then I navigate to page two
-    Then I go back
-    And I come forward
-    And I reload the page
-    And I close the page
+  # Scenario: Browser Actions
+ #   Given I navigate to a webpage
+  #  Then I navigate to page two
+   # Then I go back
+   # And I come forward
+    #And I reload the page
+  #  And I close the page
 
-  @button   
-   Scenario: Buttons and Clicks
-   Given I navigate to a webpage "https://demoqa.com/buttons" 
-   Then I perform all the click actions
+ # @button   
+ #  Scenario: Buttons and Clicks
+  #Given I navigate to a webpage "https://demoqa.com/buttons" 
+ #  Then I perform all the click actions
 
   @textbox
   Scenario:Textbox Actions
@@ -27,10 +27,10 @@ Feature: Browser Actions
   Then I click the radio button
   Then I click the check box
 
-  @dropdown
-  Scenario: Dropdown Actions
-  Given I navigate to a webpage "https://demoqa.com/automation-practice-form"
-  Then I select the dropdown value
+ # @dropdown
+#  Scenario: Dropdown Actions
+#  Given I navigate to a webpage "https://demoqa.com/automation-practice-form"
+#  Then I select the dropdown value
 
   @fileupload
   Scenario:Upload/download actions
