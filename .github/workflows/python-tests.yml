@@ -1,0 +1,104 @@
+name: Python Automation Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+
+  schedule:
+    - cron: '30 1 * * *'    
+
+  workflow_dispatch:
+    inputs:
+      run_by:
+        description: 'Select execution type'
+        required: true
+        type: choice
+        options:
+          - all
+          - file
+          - grep
+
+      test_file:
+        description: 'Python test file (e.g. tests/test_login.py)'
+        required: false
+        type: string
+
+      grep:
+        description: 'Pytest keyword (e.g. login or signup)'
+        required: false
+        type: string
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Install Playwright browser
+      - name: Install Playwright
+        run: |
+          python -m playwright install --with-deps chromium
+
+      # Execute Pytest
+      - name: Run automation tests
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_BY: ${{ inputs.run_by || 'all' }}
+          TEST_FILE: ${{ inputs.test_file }}
+          TEST_GREP: ${{ inputs.grep }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+
+            case "$RUN_BY" in
+              all)
+                pytest tests/ -v
+                ;;
+              file)
+                if [ -z "$TEST_FILE" ] || [ -n "$TEST_GREP" ]; then
+                  echo "Provide only test_file for file execution"
+                  exit 1
+                fi
+                pytest "$TEST_FILE" -v
+                ;;
+              grep)
+                if [ -z "$TEST_GREP" ] || [ -n "$TEST_FILE" ]; then
+                  echo "Provide only grep for keyword execution"
+                  exit 1
+                fi
+                pytest tests/ -k "$TEST_GREP" -v
+                ;;
+            esac
+
+          else
+            pytest tests/ -v
+          fi
+
+      # Upload test report
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: report.html
+          retention-days: 7
